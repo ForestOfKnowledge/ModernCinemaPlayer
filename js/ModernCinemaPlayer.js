@@ -182,8 +182,8 @@ class ModernCinemaPlayer {
       // Calculate the target time based on the swipe distance
       const duration = this.videoElement.duration;
       const currentTime = this.videoElement.currentTime;
-      swipePercentage = swipePercentage / 10;
-      let targetTime = currentTime + swipePercentage * duration;
+      const swipeFactor = 0.1; // Adjust this value to control the scrubbing speed
+      let targetTime = currentTime + swipePercentage * swipeFactor * duration;
 
       // Ensure the target time stays within the valid range of 0 to duration
       targetTime = Math.max(0, Math.min(duration, targetTime));
