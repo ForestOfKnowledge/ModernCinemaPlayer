@@ -199,6 +199,7 @@ class ModernCinemaPlayer {
       this.videoElement.currentTime = targetTime;
 
       // Update the progress and scrubber position
+      this.showControls();
       this.updateProgress();
       this.updateScrubberPosition();
     }
