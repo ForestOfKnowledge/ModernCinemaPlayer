@@ -691,6 +691,7 @@ class ModernCinemaPlayer {
   startSeek() {
     this.pauseVideo();
     this.isSeeking = true;
+    clearTimeout(this.hideControlsTimeout); // Stop the timeout to hide controls
   }
 
   stopSeek() {
@@ -921,9 +922,8 @@ class ModernCinemaPlayer {
 
   startControlsTimeout() {
     clearTimeout(this.hideControlsTimeout);
-    this.hideControlsTimeout = setTimeout(
-      this.hideControls.bind(this),
-      3000 // Adjust the time (in milliseconds) after which controls should disappear
-    );
+    if (!this.isSeeking) {
+      this.hideControlsTimeout = setTimeout(this.hideControls.bind(this), 3000);
+    }
   }
 }
