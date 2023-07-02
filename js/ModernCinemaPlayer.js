@@ -52,6 +52,10 @@ class ModernCinemaPlayer {
       "mousedown",
       this.startVolumeChange.bind(this)
     );
+
+    const tripleTapListener = new TripleTapListener(this.videoContainer, () => {
+      alert("Triple tap detected!");
+    });
     document.addEventListener("mouseup", this.stopVolumeChange.bind(this));
     this.volumeContainer.addEventListener(
       "click",
@@ -181,7 +185,7 @@ class ModernCinemaPlayer {
       this.startControlsTimeout();
     }
 
-    if (currentX < (9 / 10) * containerWidth && isInFullscreenMode) {
+    if (currentX < (1 / 10) * containerWidth && isInFullscreenMode) {
       // Calculate the target time based on the swipe distance
       const duration = this.videoElement.duration;
       const currentTime = this.videoElement.currentTime;
