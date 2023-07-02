@@ -146,9 +146,11 @@ class ModernCinemaPlayer {
   handleTouchStart(event) {
     this.startY = event.touches[0].clientY;
     this.volumeStart = this.videoElement.volume;
+    clearTimeout(this.hideControlsTimeout);
   }
 
   handleTouchMove(event) {
+    event.preventDefault();
     const currentY = event.touches[0].clientY;
     const currentX = event.touches[0].clientX;
     const containerHeight = this.videoContainer.clientHeight;
@@ -176,6 +178,7 @@ class ModernCinemaPlayer {
 
       // Update the volume display
       this.showVolumeDisplay();
+      this.startControlsTimeout();
     }
 
     if (currentX < (9 / 10) * containerWidth && isInFullscreenMode) {
@@ -212,6 +215,7 @@ class ModernCinemaPlayer {
     // Reset the startY and volumeStart values
     this.startY = null;
     this.volumeStart = null;
+    this.startControlsTimeout();
   }
 
   bindKeyboardShortcuts() {
