@@ -14,14 +14,13 @@ class ModernCinemaPlayer {
     this.mediaJson = mediaJson;
     this.playlistItems = this.createPlaylistItems();
     this.currentTrackIndex = 0;
-    this.quizmode = true;
     if (this.playlistItems.length <= 1) {
       this.playlistContainer.style.display = "none";
       this.videoContainer.style.alignItems = "center";
     }
     this.loadTrack(this.currentTrackIndex);
     this.isInteracted = false;
-    //this.addEventListeners();
+    this.addEventListeners();
     this.bindVideoInteraction();
     this.autoSkipToNextTrack();
     //this.bindKeyboardShortcuts();
@@ -31,53 +30,10 @@ class ModernCinemaPlayer {
     this.startControlsTimeout();
     this.isSeeking = false;
     this.isVolumeChanging = false;
-  }
-
-  addEventListeners() {
-    this.playButton.addEventListener("click", this.togglePlayback.bind(this));
-    this.scrubber.addEventListener("mousedown", this.startSeek.bind(this));
-    document.addEventListener("mousemove", this.updateSeek.bind(this));
-    document.addEventListener("mouseup", this.stopSeek.bind(this));
-    this.scrubber.addEventListener("click", this.jumpToPosition.bind(this));
-    this.progress.addEventListener("click", this.jumpToPosition.bind(this));
-    this.volumeContainer.addEventListener(
-      "click",
-      this.updateVolume.bind(this)
-    );
     this.videoElement.addEventListener(
-      "play",
-      this.updatePlayButton.bind(this)
+      "timeupdate",
+      this.updateProgress.bind(this)
     );
-    this.videoElement.addEventListener(
-      "pause",
-      this.updatePlayButton.bind(this)
-    );
-    this.fullscreenButton.addEventListener(
-      "click",
-      this.toggleFullscreen.bind(this)
-    );
-    document.addEventListener(
-      "fullscreenchange",
-      this.fullscreenChange.bind(this)
-    );
-    this.videoContainer.addEventListener(
-      "mousemove",
-      this.showControls.bind(this)
-    );
-    this.volumeContainer.addEventListener(
-      "mousedown",
-      this.startVolumeChange.bind(this)
-    );
-
-    this.videoContainer.addEventListener(
-      "click",
-      this.togglePlayback.bind(this)
-    );
-    this.videoContainer.addEventListener(
-      "dblclick",
-      this.handleDoubleClick.bind(this)
-    );
-    document.addEventListener("mouseup", this.stopVolumeChange.bind(this));
 
     this.videoContainer.addEventListener(
       "touchstart",
@@ -92,10 +48,20 @@ class ModernCinemaPlayer {
       this.handleTouchEnd.bind(this)
     );
 
-    this.videoElement.addEventListener(
-      "timeupdate",
-      this.updateProgress.bind(this)
+    this.volumeContainer.addEventListener(
+      "mousedown",
+      this.startVolumeChange.bind(this)
     );
+
+    const tripleTapListener = new TripleTapListener(this.videoContainer, () => {
+      alert("Triple tap detected!");
+    });
+    document.addEventListener("mouseup", this.stopVolumeChange.bind(this));
+    this.volumeContainer.addEventListener(
+      "click",
+      this.updateVolume.bind(this)
+    );
+
     // Example usage
     const detector = new MobileLandscapeDetector();
 
@@ -109,89 +75,6 @@ class ModernCinemaPlayer {
     document.addEventListener("notlandscape", () => {
       //alert("not landscape");
     });
-
-    // ... existing event listeners ...
-  }
-
-  removeEventListeners() {
-    this.playButton.removeEventListener(
-      "click",
-      this.togglePlayback.bind(this)
-    );
-    this.scrubber.removeEventListener("mousedown", this.startSeek.bind(this));
-    document.removeEventListener("mousemove", this.updateSeek.bind(this));
-    document.removeEventListener("mouseup", this.stopSeek.bind(this));
-    this.scrubber.removeEventListener("click", this.jumpToPosition.bind(this));
-    this.progress.removeEventListener("click", this.jumpToPosition.bind(this));
-    this.volumeContainer.removeEventListener(
-      "click",
-      this.updateVolume.bind(this)
-    );
-    this.videoElement.removeEventListener(
-      "play",
-      this.updatePlayButton.bind(this)
-    );
-    this.videoElement.removeEventListener(
-      "pause",
-      this.updatePlayButton.bind(this)
-    );
-    this.fullscreenButton.removeEventListener(
-      "click",
-      this.toggleFullscreen.bind(this)
-    );
-    document.removeEventListener(
-      "fullscreenchange",
-      this.fullscreenChange.bind(this)
-    );
-    this.videoContainer.removeEventListener(
-      "mousemove",
-      this.showControls.bind(this)
-    );
-    this.volumeContainer.removeEventListener(
-      "mousedown",
-      this.startVolumeChange.bind(this)
-    );
-
-    this.videoContainer.removeEventListener(
-      "click",
-      this.togglePlayback.bind(this)
-    );
-    this.videoContainer.removeEventListener(
-      "dblclick",
-      this.handleDoubleClick.bind(this)
-    );
-    document.removeEventListener("mouseup", this.stopVolumeChange.bind(this));
-
-    this.videoContainer.removeEventListener(
-      "touchstart",
-      this.handleTouchStart.bind(this)
-    );
-    this.videoContainer.removeEventListener(
-      "touchmove",
-      this.handleTouchMove.bind(this)
-    );
-    this.videoContainer.removeEventListener(
-      "touchend",
-      this.handleTouchEnd.bind(this)
-    );
-
-    this.videoElement.removeEventListener(
-      "timeupdate",
-      this.updateProgress.bind(this)
-    );
-
-    // Remove the landscape event listeners if they have been added
-    document.removeEventListener("landscape", () => {
-      if (!document.fullscreenElement) {
-        //this.toggleFullscreen();
-      }
-    });
-
-    document.removeEventListener("notlandscape", () => {
-      //alert("not landscape");
-    });
-
-    // ... remove other event listeners if necessary ...
   }
 
   createPlaylistItems() {
@@ -271,9 +154,6 @@ class ModernCinemaPlayer {
   }
 
   handleTouchMove(event) {
-    if (this.quizmode) {
-      return;
-    }
     event.preventDefault();
     const currentY = event.touches[0].clientY;
     const currentX = event.touches[0].clientX;
@@ -410,6 +290,15 @@ class ModernCinemaPlayer {
       document.removeEventListener("keydown", enableShortcuts);
       this.bindKeyboardShortcuts();
     };
+
+    this.videoContainer.addEventListener(
+      "click",
+      this.togglePlayback.bind(this)
+    );
+    this.videoContainer.addEventListener(
+      "dblclick",
+      this.handleDoubleClick.bind(this)
+    );
 
     document.addEventListener("click", enableShortcuts);
     document.addEventListener("keydown", enableShortcuts);
