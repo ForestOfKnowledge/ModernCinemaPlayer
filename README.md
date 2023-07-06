@@ -1,6 +1,9 @@
 # ModernCinemaPlayer
 
-ModernCinemaPlayer is a JavaScript class that provides a modern and customizable video player interface. It allows you to easily create a video player with features like playback control, volume control, progress tracking, playlist support, fullscreen mode, keyboard shortcuts, and more.
+
+[DEMO]([https://duckduckgo.com](https://moderncinemaplayer.pages.dev/example))
+
+ModernCinemaPlayer is a JavaScript class that provides a modern and customizable video player interface. It allows you to easily create a video player with features like playback control, volume control, progress tracking, playlist support, fullscreen mode, keyboard shortcuts, custom closed captioning interface, gestures, and more.
 
 ## Usage
 
